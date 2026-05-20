@@ -442,7 +442,7 @@
             font-family: var(--font-body);
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 12px;
+            font-size: 0.5em;
         }
 
         .price-line-overlay {
@@ -455,7 +455,7 @@
         .price-value-overlay {
             font-family: var(--font-display);
             font-weight: 700;
-            font-size: 24px;
+            font-size: 1em;
             white-space: nowrap;
         }
 
@@ -472,7 +472,7 @@
         .talle-value-overlay {
             font-family: var(--font-body);
             font-weight: 500;
-            font-size: 14px;
+            font-size: 1em;
             letter-spacing: 0.5px;
             white-space: nowrap;
         }
@@ -921,7 +921,6 @@
         priceSizeSlider.addEventListener('input', (e) => {
             priceSizeVal.textContent = e.target.value + 'px';
             overlayPrice.style.fontSize = e.target.value + 'px';
-            document.getElementById('preview-price-title').style.fontSize = Math.max(10, Math.floor(e.target.value * 0.5)) + 'px';
         });
 
         // Talle edits
@@ -1080,7 +1079,6 @@
 
         // Initialize sliders values
         overlayPrice.style.fontSize = priceSizeSlider.value + 'px';
-        document.getElementById('preview-price-title').style.fontSize = Math.floor(priceSizeSlider.value * 0.5) + 'px';
         overlayTalle.style.fontSize = talleSizeSlider.value + 'px';
 
         // --- High-Quality Image Exporter ---
