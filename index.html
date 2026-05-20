@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador de Imágenes ZZ ZAPAS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;900&display=swap');
+
+        :root {
+            --bg-color: #0e0e11;
+            --sidebar-bg: rgba(22, 22, 28, 0.95);
+            --card-bg: rgba(30, 30, 38, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-color: #ff3b30;
+            --accent-hover: #e02e24;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0ab;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 420px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            flex-shrink: 0;
+            z-index: 10;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-header h1 {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 24px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h1 span {
+            color: var(--accent-color);
+            text-shadow: 0 0 15px rgba(255, 59, 48, 0.4);
+        }
+
+        .sidebar-content {
+            padding: 24px;
+            overflow-y: auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Scrollbar custom style */
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section-card:hover {
+            border-color: rgba(255, 59, 48, 0.2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-primary);
+            border-left: 3px solid var(--accent-color);
+            padding-left: 10px;
+        }
+
+        /* Switch toggle button */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-switch {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider-switch:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-switch {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider-switch:before {
+            transform: translateX(20px);
+        }
+
+        /* Upload Dropzone styling */
+        .dropzone {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .dropzone:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(255, 59, 48, 0.05);
+        }
+
+        .dropzone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .dropzone-icon {
+            font-size: 32px;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .dropzone:hover .dropzone-icon {
+            color: var(--accent-color);
+        }
+
+        .dropzone-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .dropzone-filename {
+            font-size: 13px;
+            color: var(--accent-color);
+            font-weight: 500;
+            word-break: break-all;
+            margin-top: 4px;
+        }
+
+        /* Controls styling */
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-text {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: white;
+            font-family: var(--font-body);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-text:focus {
+            border-color: var(--accent-color);
+        }
+
+        .range-slider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .range-slider input[type="range"] {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .range-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .range-slider input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .range-val {
+            font-size: 13px;
+            color: var(--text-secondary);
+            min-width: 32px;
+            text-align: right;
+        }
+
+        /* Color Options */
+        .color-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            position: relative;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.selected {
+            border-color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .color-btn.white { background: #ffffff; }
+        .color-btn.black { background: #000000; border: 1px solid rgba(255,255,255,0.2); }
+        .color-btn.original { 
+            background: linear-gradient(135deg, #ffffff 50%, #000000 50%); 
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Interactive Preview Workspace */
+        .workspace {
+            flex-grow: 1;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 40px;
+            background: radial-gradient(circle at center, #1b1b22 0%, #0a0a0d 100%);
+            overflow: auto;
+        }
+
+        #preview-wrapper {
+            position: relative;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.8);
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            background: #000;
+        }
+
+        #preview-image {
+            display: block;
+            max-width: 100%;
+            max-height: 75vh;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .placeholder-view {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            max-width: 400px;
+        }
+
+        .placeholder-icon {
+            font-size: 64px;
+            color: rgba(255, 255, 255, 0.1);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+
+        .placeholder-text {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* Overlays on image */
+        .overlay {
+            position: absolute;
+            cursor: move;
+            user-select: none;
+            border: 1.5px dashed transparent;
+            box-sizing: border-box;
+            will-change: transform, left, top, width;
+            z-index: 5;
+        }
+
+        .overlay.selected {
+            border-color: var(--accent-color);
+        }
+
+        /* Resize handle */
+        .resize-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-color);
+            border: 2px solid white;
+            border-radius: 50%;
+            bottom: -6px;
+            right: -6px;
+            cursor: se-resize;
+            display: none;
+            z-index: 10;
+        }
+
+        .overlay.selected .resize-handle {
+            display: block;
+        }
+
+        /* Overlay specific content rendering */
+        #overlay-logo {
+            width: 25%;
+            top: 10px;
+            left: 10px;
+        }
+
+        #overlay-logo img {
+            width: 100%;
+            height: auto;
+            display: block;
+            pointer-events: none;
+        }
+
+        #overlay-price {
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .price-title-overlay {
+            font-family: var(--font-body);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 12px;
+        }
+
+        .price-line-overlay {
+            height: 2px;
+            background-color: var(--accent-color);
+            margin: 4px 0 8px 0;
+            width: 100%;
+        }
+
+        .price-value-overlay {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 24px;
+            white-space: nowrap;
+        }
+
+        #overlay-talle {
+            bottom: 20px;
+            left: 20px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .talle-value-overlay {
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .talle-line-overlay {
+            height: 2px;
+            background-color: var(--accent-color);
+            margin-top: 4px;
+            width: 50px;
+        }
+
+        /* Export Bar styling */
+        .sidebar-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(14, 14, 17, 0.5);
+        }
+
+        .btn-download {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #d32f2f 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(255, 59, 48, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 59, 48, 0.5);
+        }
+
+        .btn-download:active {
+            transform: translateY(1px);
+        }
+
+        .btn-download:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>ZZ <span>ZAPAS</span></h1>
+        </div>
+
+        <div class="sidebar-content">
+            <!-- 1. Imagen Base Card -->
+            <div class="section-card">
+                <div class="section-title">
+                    <span>Imagen Base</span>
+                </div>
+                <div class="dropzone" id="bg-dropzone">
+                    <span class="dropzone-icon">📷</span>
+                    <span class="dropzone-text">Arrastra aquí la foto o haz clic para subir</span>
+                    <input type="file" id="bg-input" accept="image/*">
+                    <div class="dropzone-filename" id="bg-filename"></div>
+                </div>
+            </div>
+
+            <!-- 2. Logo Card -->
+            <div class="section-card">
+                <div class="section-title">
+                    <span>Logo ZZ ZAPAS</span>
+                    <label class="switch">
+                        <input type="checkbox" id="logo-toggle" checked>
+                        <span class="slider-switch"></span>
+                    </label>
+                </div>
+                
+                <div id="logo-controls-container" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div class="dropzone" id="logo-dropzone" style="padding: 16px;">
+                        <span class="dropzone-icon" style="font-size: 24px;">🏷️</span>
+                        <span class="dropzone-text" style="font-size: 12px;">Subir Logo personalizado (opcional)</span>
+                        <input type="file" id="logo-input" accept="image/*">
+                        <div class="dropzone-filename" id="logo-filename"></div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Color del Logo</label>
+                        <div class="color-options" id="logo-color-options">
+                            <button class="color-btn white selected" data-color="blanco" title="Blanco Transparente"></button>
+                            <button class="color-btn black" data-color="negro" title="Negro Transparente"></button>
+                            <button class="color-btn original" data-color="original" title="Original"></button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Tamaño del Logo</label>
+                        <div class="range-slider">
+                            <input type="range" id="logo-size" min="10" max="60" value="25">
+                            <span class="range-val" id="logo-size-val">25%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Precio Card -->
+            <div class="section-card">
+                <div class="section-title">
+                    <span>Precio</span>
+                    <label class="switch">
+                        <input type="checkbox" id="price-toggle" checked>
+                        <span class="slider-switch"></span>
+                    </label>
+                </div>
+
+                <div id="price-controls-container" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div class="control-group">
+                        <label>Valor de Venta</label>
+                        <input type="text" class="input-text" id="price-text" value="$55.000">
+                    </div>
+
+                    <div class="control-group">
+                        <label>Color de Letra</label>
+                        <input type="color" id="price-color" value="#ffffff" style="width:100%; height:36px; border:none; border-radius:6px; cursor:pointer; background:none;">
+                    </div>
+
+                    <div class="control-group">
+                        <label>Tamaño de Letra</label>
+                        <div class="range-slider">
+                            <input type="range" id="price-size" min="12" max="60" value="24">
+                            <span class="range-val" id="price-size-val">24px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Talle Card -->
+            <div class="section-card">
+                <div class="section-title">
+                    <span>Talles</span>
+                    <label class="switch">
+                        <input type="checkbox" id="talle-toggle" checked>
+                        <span class="slider-switch"></span>
+                    </label>
+                </div>
+
+                <div id="talle-controls-container" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div class="control-group">
+                        <label>Texto de Talles</label>
+                        <input type="text" class="input-text" id="talle-text" value="39 AL 43">
+                    </div>
+
+                    <div class="control-group">
+                        <label>Color de Letra</label>
+                        <input type="color" id="talle-color" value="#ffffff" style="width:100%; height:36px; border:none; border-radius:6px; cursor:pointer; background:none;">
+                    </div>
+
+                    <div class="control-group">
+                        <label>Tamaño de Letra</label>
+                        <div class="range-slider">
+                            <input type="range" id="talle-size" min="10" max="40" value="14">
+                            <span class="range-val" id="talle-size-val">14px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="btn-download" id="btn-download" disabled>
+                <span>Descargar Imagen</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- WORKSPACE / PREVIEW -->
+    <div class="workspace" id="workspace">
+        <div class="placeholder-view" id="placeholder">
+            <span class="placeholder-icon">📸</span>
+            <p class="placeholder-text">Sube una foto base desde el panel lateral para empezar a colocar el logo, precio y talles.</p>
+        </div>
+
+        <div id="preview-wrapper">
+            <div id="preview-container" style="position: relative; width: 100%; height: 100%;">
+                <img id="preview-image" src="" alt="Fondo">
+                
+                <!-- Overlay Logo -->
+                <div class="overlay" id="overlay-logo">
+                    <img id="logo-img" src="" alt="Logo">
+                    <div class="resize-handle"></div>
+                </div>
+
+                <!-- Overlay Precio -->
+                <div class="overlay" id="overlay-price">
+                    <div class="price-title-overlay" id="preview-price-title">Precio de Venta</div>
+                    <div class="price-line-overlay"></div>
+                    <div class="price-value-overlay" id="preview-price-val">$55.000</div>
+                </div>
+
+                <!-- Overlay Talle -->
+                <div class="overlay" id="overlay-talle">
+                    <div class="talle-value-overlay" id="preview-talle-val">TALLES: 39 AL 43</div>
+                    <div class="talle-line-overlay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State variables
+        let baseImage = null;
+        let originalLogoSrc = null;
+        let logoImage = null;
+        let logoAspectRatio = 1.0;
+        let activeOverlay = null;
+
+        // Position percentages (stored to allow resize responsiveness)
+        let logoPos = { x: 5, y: 5, w: 25 }; // width in percentage
+        let pricePos = { x: 60, y: 5 };      // position in percentage
+        let tallePos = { x: 5, y: 75 };      // position in percentage
+
+        // DOM elements
+        const bgInput = document.getElementById('bg-input');
+        const bgDropzone = document.getElementById('bg-dropzone');
+        const bgFilename = document.getElementById('bg-filename');
+        const previewImage = document.getElementById('preview-image');
+        const previewWrapper = document.getElementById('preview-wrapper');
+        const previewContainer = document.getElementById('preview-container');
+        const placeholder = document.getElementById('placeholder');
+        const btnDownload = document.getElementById('btn-download');
+
+        const logoInput = document.getElementById('logo-input');
+        const logoDropzone = document.getElementById('logo-dropzone');
+        const logoFilename = document.getElementById('logo-filename');
+        const logoToggle = document.getElementById('logo-toggle');
+        const logoImg = document.getElementById('logo-img');
+        const overlayLogo = document.getElementById('overlay-logo');
+        const logoSizeSlider = document.getElementById('logo-size');
+        const logoSizeVal = document.getElementById('logo-size-val');
+
+        const priceToggle = document.getElementById('price-toggle');
+        const priceText = document.getElementById('price-text');
+        const priceColor = document.getElementById('price-color');
+        const priceSizeSlider = document.getElementById('price-size');
+        const priceSizeVal = document.getElementById('price-size-val');
+        const overlayPrice = document.getElementById('overlay-price');
+        const previewPriceVal = document.getElementById('preview-price-val');
+
+        const talleToggle = document.getElementById('talle-toggle');
+        const talleText = document.getElementById('talle-text');
+        const talleColor = document.getElementById('talle-color');
+        const talleSizeSlider = document.getElementById('talle-size');
+        const talleSizeVal = document.getElementById('talle-size-val');
+        const overlayTalle = document.getElementById('overlay-talle');
+        const previewTalleVal = document.getElementById('preview-talle-val');
+
+        // Preload default local Logo.jpeg if available (we will attempt to load file Logo.jpeg from current path)
+        // Since we are running in browser locally next to Logo.jpeg, a relative fetch might work, or it will fallback to user upload.
+        fetch('Logo.jpeg')
+            .then(res => {
+                if (res.ok) return res.blob();
+                throw new Error("Local Logo.jpeg not found");
+            })
+            .then(blob => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    originalLogoSrc = e.target.result;
+                    processLogoColor('blanco');
+                };
+                reader.readAsDataURL(blob);
+                logoFilename.textContent = "Logo.jpeg (Auto-cargado)";
+            })
+            .catch(() => {
+                // If local logo fails, load a fallback simple text logo so the UI is not empty
+                createFallbackLogo();
+            });
+
+        function createFallbackLogo() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 100;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000000'; // black text
+            ctx.fillRect(0, 0, canvas.width, canvas.height); // white bg (since black text will be converted later)
+            ctx.fillStyle = '#ffffff'; // white text in center
+            ctx.fillRect(0,0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 36px "Outfit", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ZZ ZAPAS', canvas.width/2, canvas.height/2);
+            originalLogoSrc = canvas.toDataURL();
+            processLogoColor('blanco');
+        }
+
+        // --- File Uploader Logic ---
+        function setupUpload(input, dropzone, filenameElement, callback) {
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) handleFile(file, filenameElement, callback);
+            });
+
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = 'var(--accent-color)';
+            });
+
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                const file = e.dataTransfer.files[0];
+                if (file) handleFile(file, filenameElement, callback);
+            });
+        }
+
+        function handleFile(file, filenameElement, callback) {
+            filenameElement.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => callback(e.target.result);
+            reader.readAsDataURL(file);
+        }
+
+        setupUpload(bgInput, bgDropzone, bgFilename, (dataUrl) => {
+            baseImage = new Image();
+            baseImage.onload = () => {
+                previewImage.src = dataUrl;
+                placeholder.style.display = 'none';
+                previewWrapper.style.display = 'block';
+                btnDownload.removeAttribute('disabled');
+                setTimeout(resizeContainerToImage, 50);
+            };
+            baseImage.src = dataUrl;
+        });
+
+        setupUpload(logoInput, logoDropzone, logoFilename, (dataUrl) => {
+            originalLogoSrc = dataUrl;
+            // Get selected color mode
+            const activeColorBtn = document.querySelector('#logo-color-options .color-btn.selected');
+            const colorMode = activeColorBtn ? activeColorBtn.getAttribute('data-color') : 'blanco';
+            processLogoColor(colorMode);
+        });
+
+        // --- Logo Processing (Transparency conversion) ---
+        function processLogoColor(colorMode) {
+            if (!originalLogoSrc) return;
+
+            if (colorMode === 'original') {
+                logoImg.src = originalLogoSrc;
+                logoImg.onload = () => {
+                    logoAspectRatio = logoImg.naturalHeight / logoImg.naturalWidth;
+                    updateOverlayPositions();
+                };
+                return;
+            }
+
+            const tempImg = new Image();
+            tempImg.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = tempImg.width;
+                canvas.height = tempImg.height;
+                ctx.drawImage(tempImg, 0, 0);
+
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i+1];
+                    const b = data[i+2];
+
+                    // Grayscale conversion
+                    const v = 0.299 * r + 0.587 * g + 0.114 * b;
+                    // White (255) -> Alpha 0. Black (0) -> Alpha 255.
+                    const alpha = 255 - v;
+
+                    data[i+3] = alpha;
+
+                    if (colorMode === 'blanco') {
+                        data[i] = 255;
+                        data[i+1] = 255;
+                        data[i+2] = 255;
+                    } else if (colorMode === 'negro') {
+                        data[i] = 0;
+                        data[i+1] = 0;
+                        data[i+2] = 0;
+                    }
+                }
+
+                ctx.putImageData(imgData, 0, 0);
+                logoImg.src = canvas.toDataURL();
+                logoImg.onload = () => {
+                    logoAspectRatio = logoImg.naturalHeight / logoImg.naturalWidth;
+                    updateOverlayPositions();
+                };
+            };
+            tempImg.src = originalLogoSrc;
+        }
+
+        // Logo Color Selector Events
+        document.querySelectorAll('#logo-color-options .color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#logo-color-options .color-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                processLogoColor(btn.getAttribute('data-color'));
+            });
+        });
+
+        // --- Controls Handlers ---
+        // Toggle togglers
+        logoToggle.addEventListener('change', (e) => {
+            overlayLogo.style.display = e.target.checked ? 'block' : 'none';
+            document.getElementById('logo-controls-container').style.opacity = e.target.checked ? '1' : '0.4';
+        });
+
+        priceToggle.addEventListener('change', (e) => {
+            overlayPrice.style.display = e.target.checked ? 'block' : 'none';
+            document.getElementById('price-controls-container').style.opacity = e.target.checked ? '1' : '0.4';
+        });
+
+        talleToggle.addEventListener('change', (e) => {
+            overlayTalle.style.display = e.target.checked ? 'block' : 'none';
+            document.getElementById('talle-controls-container').style.opacity = e.target.checked ? '1' : '0.4';
+        });
+
+        // Price edits
+        priceText.addEventListener('input', (e) => {
+            previewPriceVal.textContent = e.target.value || '';
+        });
+        priceColor.addEventListener('input', (e) => {
+            overlayPrice.style.color = e.target.value;
+        });
+        priceSizeSlider.addEventListener('input', (e) => {
+            priceSizeVal.textContent = e.target.value + 'px';
+            overlayPrice.style.fontSize = e.target.value + 'px';
+            document.getElementById('preview-price-title').style.fontSize = Math.max(10, Math.floor(e.target.value * 0.5)) + 'px';
+        });
+
+        // Talle edits
+        talleText.addEventListener('input', (e) => {
+            previewTalleVal.textContent = 'TALLES: ' + (e.target.value || '');
+        });
+        talleColor.addEventListener('input', (e) => {
+            overlayTalle.style.color = e.target.value;
+        });
+        talleSizeSlider.addEventListener('input', (e) => {
+            talleSizeVal.textContent = e.target.value + 'px';
+            overlayTalle.style.fontSize = e.target.value + 'px';
+        });
+
+        // Logo Size slider
+        logoSizeSlider.addEventListener('input', (e) => {
+            logoPos.w = parseInt(e.target.value);
+            logoSizeVal.textContent = logoPos.w + '%';
+            updateOverlayPositions();
+        });
+
+        // --- Fit Container to Rendered Image ---
+        function resizeContainerToImage() {
+            if (!previewImage.src || previewWrapper.style.display === 'none') return;
+            const rect = previewImage.getBoundingClientRect();
+            previewContainer.style.width = rect.width + 'px';
+            previewContainer.style.height = rect.height + 'px';
+            updateOverlayPositions();
+        }
+
+        window.addEventListener('resize', resizeContainerToImage);
+        previewImage.addEventListener('load', resizeContainerToImage);
+
+        // --- Positioning Logic ---
+        function updateOverlayPositions() {
+            const containerW = parseFloat(previewContainer.style.width);
+            const containerH = parseFloat(previewContainer.style.height);
+            
+            if (isNaN(containerW) || isNaN(containerH)) return;
+
+            // Apply Logo width and positions
+            overlayLogo.style.width = (logoPos.w / 100 * containerW) + 'px';
+            overlayLogo.style.left = (logoPos.x / 100 * containerW) + 'px';
+            overlayLogo.style.top = (logoPos.y / 100 * containerH) + 'px';
+
+            // Apply Price positions
+            overlayPrice.style.left = (pricePos.x / 100 * containerW) + 'px';
+            overlayPrice.style.top = (pricePos.y / 100 * containerH) + 'px';
+
+            // Apply Talle positions
+            overlayTalle.style.left = (tallePos.x / 100 * containerW) + 'px';
+            overlayTalle.style.top = (tallePos.y / 100 * containerH) + 'px';
+        }
+
+        // --- Drag and Drop + Resize System ---
+        function initializeDragAndDrop(element, posStorage) {
+            let startPointerX = 0;
+            let startPointerY = 0;
+            let startElementX = 0;
+            let startElementY = 0;
+            let isDragging = false;
+            let isResizing = false;
+            let startWidth = 0;
+
+            element.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                
+                // Set active overlay
+                if (activeOverlay) activeOverlay.classList.remove('selected');
+                activeOverlay = element;
+                activeOverlay.classList.add('selected');
+
+                const rect = previewContainer.getBoundingClientRect();
+                const elRect = element.getBoundingClientRect();
+
+                // Check if handle was clicked
+                if (e.target.classList.contains('resize-handle')) {
+                    isResizing = true;
+                    startWidth = elRect.width;
+                    startPointerX = e.clientX;
+                } else {
+                    isDragging = true;
+                    startElementX = elRect.left - rect.left;
+                    startElementY = elRect.top - rect.top;
+                    startPointerX = e.clientX;
+                    startPointerY = e.clientY;
+                }
+
+                element.setPointerCapture(e.pointerId);
+            });
+
+            element.addEventListener('pointermove', (e) => {
+                if (!isDragging && !isResizing) return;
+
+                const containerW = parseFloat(previewContainer.style.width);
+                const containerH = parseFloat(previewContainer.style.height);
+
+                if (isDragging) {
+                    const deltaX = e.clientX - startPointerX;
+                    const deltaY = e.clientY - startPointerY;
+
+                    let newLeft = startElementX + deltaX;
+                    let newTop = startElementY + deltaY;
+
+                    // Bounds containment
+                    newLeft = Math.max(0, Math.min(containerW - element.offsetWidth, newLeft));
+                    newTop = Math.max(0, Math.min(containerH - element.offsetHeight, newTop));
+
+                    // Store percentages
+                    posStorage.x = (newLeft / containerW) * 100;
+                    posStorage.y = (newTop / containerH) * 100;
+
+                    element.style.left = newLeft + 'px';
+                    element.style.top = newTop + 'px';
+                } else if (isResizing) {
+                    const deltaX = e.clientX - startPointerX;
+                    let newWidth = startWidth + deltaX;
+                    
+                    // Min size limits
+                    newWidth = Math.max(30, Math.min(containerW * 0.9, newWidth));
+                    
+                    const widthPct = (newWidth / containerW) * 100;
+                    logoPos.w = Math.round(widthPct);
+                    logoSizeSlider.value = logoPos.w;
+                    logoSizeVal.textContent = logoPos.w + '%';
+                    
+                    element.style.width = newWidth + 'px';
+                }
+            });
+
+            const stopInteraction = (e) => {
+                if (isDragging || isResizing) {
+                    element.releasePointerCapture(e.pointerId);
+                    isDragging = false;
+                    isResizing = false;
+                }
+            };
+
+            element.addEventListener('pointerup', stopInteraction);
+            element.addEventListener('pointercancel', stopInteraction);
+        }
+
+        initializeDragAndDrop(overlayLogo, logoPos);
+        initializeDragAndDrop(overlayPrice, pricePos);
+        initializeDragAndDrop(overlayTalle, tallePos);
+
+        // Deselect overlay when clicking elsewhere on workspace
+        document.getElementById('workspace').addEventListener('pointerdown', (e) => {
+            if (!e.target.closest('.overlay')) {
+                if (activeOverlay) {
+                    activeOverlay.classList.remove('selected');
+                    activeOverlay = null;
+                }
+            }
+        });
+
+        // Initialize sliders values
+        overlayPrice.style.fontSize = priceSizeSlider.value + 'px';
+        document.getElementById('preview-price-title').style.fontSize = Math.floor(priceSizeSlider.value * 0.5) + 'px';
+        overlayTalle.style.fontSize = talleSizeSlider.value + 'px';
+
+        // --- High-Quality Image Exporter ---
+        btnDownload.addEventListener('click', () => {
+            if (!baseImage) return;
+
+            // Show loading state or text
+            const btnText = btnDownload.querySelector('span');
+            btnText.textContent = "Procesando...";
+            btnDownload.disabled = true;
+
+            setTimeout(() => {
+                try {
+                    // Create offscreen canvas at original resolution
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = baseImage.naturalWidth;
+                    canvas.height = baseImage.naturalHeight;
+
+                    // Draw base image
+                    ctx.drawImage(baseImage, 0, 0);
+
+                    // Compute scale factor between original image and preview display
+                    const previewW = parseFloat(previewContainer.style.width);
+                    const scale = canvas.width / previewW;
+
+                    // 1. Draw Logo
+                    if (logoToggle.checked && logoImg.src && logoImg.complete) {
+                        const logoW = (logoPos.w / 100) * canvas.width;
+                        const logoH = logoW * logoAspectRatio;
+                        const logoX = (logoPos.x / 100) * canvas.width;
+                        const logoY = (logoPos.y / 100) * canvas.height;
+
+                        ctx.drawImage(logoImg, logoX, logoY, logoW, logoH);
+                    }
+
+                    // 2. Draw Price
+                    if (priceToggle.checked && priceText.value) {
+                        const basePriceSize = parseInt(priceSizeSlider.value) * scale;
+                        const headerSize = basePriceSize * 0.5;
+                        const priceX = (pricePos.x / 100) * canvas.width;
+                        const priceY = (pricePos.y / 100) * canvas.height;
+
+                        ctx.fillStyle = priceColor.value;
+                        
+                        // Draw "PRECIO DE VENTA"
+                        ctx.font = `400 ${headerSize}px 'Inter', sans-serif`;
+                        ctx.textBaseline = 'top';
+                        ctx.fillText("PRECIO DE VENTA", priceX, priceY);
+
+                        // Underline red line
+                        const textMetrics = ctx.measureText("PRECIO DE VENTA");
+                        const lineY = priceY + headerSize + (6 * scale);
+                        ctx.lineWidth = 3 * scale;
+                        ctx.strokeStyle = '#ff3b30';
+                        ctx.beginPath();
+                        ctx.moveTo(priceX, lineY);
+                        ctx.lineTo(priceX + textMetrics.width, lineY);
+                        ctx.stroke();
+
+                        // Draw Price value
+                        ctx.font = `bold ${basePriceSize}px 'Outfit', sans-serif`;
+                        const priceValY = lineY + (12 * scale);
+                        ctx.fillText(priceText.value, priceX, priceValY);
+                    }
+
+                    // 3. Draw Talle
+                    if (talleToggle.checked && talleText.value) {
+                        const talleSize = parseInt(talleSizeSlider.value) * scale;
+                        const talleX = (tallePos.x / 100) * canvas.width;
+                        const talleY = (tallePos.y / 100) * canvas.height;
+
+                        ctx.fillStyle = talleColor.value;
+
+                        // Draw "TALLES: [valor]"
+                        ctx.font = `500 ${talleSize}px 'Inter', sans-serif`;
+                        ctx.textBaseline = 'top';
+                        const text = "TALLES: " + talleText.value;
+                        ctx.fillText(text, talleX, talleY);
+
+                        // Draw Red underline (100px scaled)
+                        const lineY = talleY + talleSize + (6 * scale);
+                        ctx.lineWidth = 3 * scale;
+                        ctx.strokeStyle = '#ff3b30';
+                        ctx.beginPath();
+                        ctx.moveTo(talleX, lineY);
+                        ctx.lineTo(talleX + (80 * scale), lineY);
+                        ctx.stroke();
+                    }
+
+                    // Trigger browser download
+                    const link = document.createElement('a');
+                    link.download = 'zz_zapas_editada.jpg';
+                    link.href = canvas.toDataURL('image/jpeg', 0.95);
+                    link.click();
+                } catch (err) {
+                    console.error("Error al exportar la imagen:", err);
+                    alert("Ocurrió un error al procesar la descarga de la imagen. Verifica los formatos e intenta nuevamente.");
+                } finally {
+                    btnText.textContent = "Descargar Imagen";
+                    btnDownload.disabled = false;
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
