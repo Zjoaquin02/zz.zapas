@@ -102,7 +102,7 @@ def main():
         font_bold = ImageFont.load_default()
         font_medium = ImageFont.load_default()
 
-    logo_path = os.path.join(base_dir, "Logo.jpeg")
+    logo_path = os.path.join(base_dir, "assets", "Logo.jpeg")
     logo = process_logo(logo_path, target_width=400, color=color_texto) if os.path.exists(logo_path) else None
 
     for img_name in imgs_to_process:

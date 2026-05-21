@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creador de Imágenes ZZ ZAPAS</title>
+    <link rel="icon" type="image/png" href="assets/icono.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;900&display=swap');
 
@@ -738,12 +739,12 @@
         const overlayTalle = document.getElementById('overlay-talle');
         const previewTalleVal = document.getElementById('preview-talle-val');
 
-        // Preload default local Logo.jpeg if available (we will attempt to load file Logo.jpeg from current path)
-        // Since we are running in browser locally next to Logo.jpeg, a relative fetch might work, or it will fallback to user upload.
-        fetch('Logo.jpeg')
+        // Preload default local Logo.jpeg from assets if available (we will attempt to load file Logo.jpeg from assets path)
+        // Since we are running in browser locally next to assets/Logo.jpeg, a relative fetch might work, or it will fallback to user upload.
+        fetch('assets/Logo.jpeg')
             .then(res => {
                 if (res.ok) return res.blob();
-                throw new Error("Local Logo.jpeg not found");
+                throw new Error("Local assets/Logo.jpeg not found");
             })
             .then(blob => {
                 const reader = new FileReader();
@@ -752,7 +753,7 @@
                     processLogoColor('blanco');
                 };
                 reader.readAsDataURL(blob);
-                logoFilename.textContent = "Logo.jpeg (Auto-cargado)";
+                logoFilename.textContent = "Logo.jpeg (Auto-cargado desde assets)";
             })
             .catch(() => {
                 // If local logo fails, load a fallback simple text logo so the UI is not empty
